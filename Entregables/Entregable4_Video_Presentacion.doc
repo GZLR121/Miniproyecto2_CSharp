@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" lang="es">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta charset="UTF-8">
 <meta name="author" content="Gael Zair Limon Rdz">
 <meta name="generator" content="Microsoft Word">
@@ -11,7 +12,7 @@
   <o:Company>Gael Zair Limon Rdz - UAA</o:Company>
 </o:DocumentProperties>
 </xml><![endif]-->
-<title>Entregable 4 - VÃ­deo de PresentaciÃ³n del Sistema Funcionando</title>
+<title>Entregable 4 - Vídeo de Presentación del Sistema Funcionando</title>
 <style>
   @page { size: letter; margin: 18mm; }
   body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; max-width: 840px; margin: 0 auto; color: #1e293b; line-height: 1.56; }
@@ -35,23 +36,23 @@
 </style>
 </head>
 <body>
-<h1>Entregable 4: VÃ­deo de PresentaciÃ³n del Sistema Funcionando</h1>
-<p><strong>Materia:</strong> ProgramaciÃ³n Visual (5Â° Semestre) &nbsp;|&nbsp; <strong>Profesor:</strong> Juan MuÃ±oz LÃ³pez<br>
+<h1>Entregable 4: Vídeo de Presentación del Sistema Funcionando</h1>
+<p><strong>Materia:</strong> Programación Visual (5° Semestre) &nbsp;|&nbsp; <strong>Profesor:</strong> Juan Muñoz López<br>
 <strong>Alumno:</strong> Gael Zair Limon Rdz (ID: 555274 | Grupo A, No. de Lista: 21 | Correo: al555274@edu.uaa.mx / f.gzlr55@gmail.com)</p>
 
-<h2>1. Enlace para Ver / Descargar el VÃ­deo de DemostraciÃ³n</h2>
-<p>En caso de que el archivo de vÃ­deo supere el tamaÃ±o mÃ¡ximo permitido en el Aula Virtual, puede visualizarse o descargarse desde la siguiente liga:</p>
+<h2>1. Enlace para Ver / Descargar el Vídeo de Demostración</h2>
+<p>En caso de que el archivo de vídeo supere el tamaño máximo permitido en el Aula Virtual, puede visualizarse o descargarse desde la siguiente liga:</p>
 <table>
-  <tr><th>Plataforma</th><th>Enlace de Acceso al VÃ­deo (MÃ¡ximo 5 minutos)</th></tr>
-  <tr><td><strong>Google Drive / OneDrive / YouTube</strong></td><td><code>[Pegar aquÃ­ la liga compartida de tu vÃ­deo antes de exportar a PDF]</code></td></tr>
+  <tr><th>Plataforma</th><th>Enlace de Acceso al Vídeo (Máximo 5 minutos)</th></tr>
+  <tr><td><strong>Google Drive / OneDrive / YouTube</strong></td><td><code>[Pegar aquí la liga compartida de tu vídeo antes de exportar a PDF]</code></td></tr>
 </table>
 
-<h2>2. Escaleta / Guion RÃ¡pido para Grabar tu VÃ­deo (3 a 4 minutos)</h2>
+<h2>2. Escaleta / Guion Rápido para Grabar tu Vídeo (3 a 4 minutos)</h2>
 <ol>
-  <li><strong>Minuto 0:00 - 0:45 (Inicio y RF1 JSON):</strong> Abrir <code>SistemaLogisticaAuditoria.exe</code> y mostrar en la barra superior que los parÃ¡metros (<code>PrecioBasePorKg = $25.00</code>, <code>IVA = 16%</code>, <code>EnvÃ­o Fijo = $60.00</code>) se cargaron automÃ¡ticamente desde <code>appsettings.json</code>.</li>
-  <li><strong>Minuto 0:45 - 1:30 (RF2 Multi-Idioma DinÃ¡mico):</strong> Cambiar el selector superior de <em>EspaÃ±ol (ES)</em> a <em>English (EN)</em> para demostrar cÃ³mo cambian todas las etiquetas, botones y columnas de la tabla al instante.</li>
-  <li><strong>Minuto 1:30 - 2:45 (RF3, RF4 y Retos 1, 2 y 3):</strong> Hacer clic en <strong>Procesar Lote y Guardar en BD</strong>. SeÃ±alar la tabla ordenada de mayor a menor costo total (Burbuja), mostrar en la bitÃ¡cora inferior que el arreglo estÃ¡tico se redimensionÃ³ manualmente de 5 a 10 elementos y que las lÃ­neas corruptas <code>PACK-002</code> (peso negativo) y <code>PACK-003</code> (peso <code>ABC</code>) fueron capturadas en el arreglo paralelo de errores sin detener el programa.</li>
-  <li><strong>Minuto 2:45 - 3:45 (RF5 Eventos, Base de Datos y RF6 CSV):</strong> Hacer clic en distintas filas de la tabla para mostrar cÃ³mo cambia el Panel Lateral de InspecciÃ³n, presionar <strong>Invertir Arreglo</strong>, presionar <strong>Registrar RecepciÃ³n (BD)</strong>, consultar las transacciones con <strong>Ver Transacciones BD</strong> y finalmente exportar el reporte con <strong>Exportar a CSV (RF6)</strong>.</li>
+  <li><strong>Minuto 0:00 - 0:45 (Inicio y RF1 JSON):</strong> Abrir <code>SistemaLogisticaAuditoria.exe</code> y mostrar en la barra superior que los parámetros (<code>PrecioBasePorKg = $25.00</code>, <code>IVA = 16%</code>, <code>Envío Fijo = $60.00</code>) se cargaron automáticamente desde <code>appsettings.json</code>.</li>
+  <li><strong>Minuto 0:45 - 1:30 (RF2 Multi-Idioma Dinámico):</strong> Cambiar el selector superior de <em>Español (ES)</em> a <em>English (EN)</em> para demostrar cómo cambian todas las etiquetas, botones y columnas de la tabla al instante.</li>
+  <li><strong>Minuto 1:30 - 2:45 (RF3, RF4 y Retos 1, 2 y 3):</strong> Hacer clic en <strong>Procesar Lote y Guardar en BD</strong>. Señalar la tabla ordenada de mayor a menor costo total (Burbuja), mostrar en la bitácora inferior que el arreglo estático se redimensionó manualmente de 5 a 10 elementos y que las líneas corruptas <code>PACK-002</code> (peso negativo) y <code>PACK-003</code> (peso <code>ABC</code>) fueron capturadas en el arreglo paralelo de errores sin detener el programa.</li>
+  <li><strong>Minuto 2:45 - 3:45 (RF5 Eventos, Base de Datos y RF6 CSV):</strong> Hacer clic en distintas filas de la tabla para mostrar cómo cambia el Panel Lateral de Inspección, presionar <strong>Invertir Arreglo</strong>, presionar <strong>Registrar Recepción (BD)</strong>, consultar las transacciones con <strong>Ver Transacciones BD</strong> y finalmente exportar el reporte con <strong>Exportar a CSV (RF6)</strong>.</li>
 </ol>
 </body>
 </html>

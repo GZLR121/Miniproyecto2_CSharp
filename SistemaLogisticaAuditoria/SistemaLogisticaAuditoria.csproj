@@ -9,7 +9,7 @@
     <AssemblyName>SistemaLogisticaAuditoria</AssemblyName>
       <Authors>Gael Zair Limon Rdz</Authors>
     <Company>Gael Zair Limon Rdz</Company>
-    <Copyright>Copyright Â© Gael Zair Limon Rdz</Copyright>
+    <Copyright>Copyright © Gael Zair Limon Rdz</Copyright>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <PathMap>$(MSBuildProjectDirectory)=C:\Proyectos\GaelZairLimonRdz</PathMap>

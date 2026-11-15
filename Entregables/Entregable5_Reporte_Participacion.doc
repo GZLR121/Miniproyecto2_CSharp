@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" lang="es">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta charset="UTF-8">
 <meta name="author" content="Gael Zair Limon Rdz">
 <meta name="generator" content="Microsoft Word">
@@ -11,7 +12,7 @@
   <o:Company>Gael Zair Limon Rdz - UAA</o:Company>
 </o:DocumentProperties>
 </xml><![endif]-->
-<title>Entregable 5 - Reporte de ParticipaciÃ³n</title>
+<title>Entregable 5 - Reporte de Participación</title>
 <style>
   @page { size: letter; margin: 18mm; }
   body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; max-width: 840px; margin: 0 auto; color: #1e293b; line-height: 1.56; }
@@ -35,30 +36,30 @@
 </style>
 </head>
 <body>
-<h1>Entregable 5: Reporte de ParticipaciÃ³n del Proyecto</h1>
-<p><strong>Universidad AutÃ³noma de Aguascalientes</strong> â€” Centro de Ciencias BÃ¡sicas â€” Departamento de Sistemas de InformaciÃ³n<br>
-<strong>Carrera:</strong> Licenciatura en InformÃ¡tica y TecnologÃ­as Computacionales (5Â° Semestre, Grupo A)<br>
-<strong>Profesor:</strong> Juan MuÃ±oz LÃ³pez<br>
-<strong>Proyecto:</strong> Sistema de Procesamiento y AuditorÃ­a de FacturaciÃ³n (LogÃ­stica y Entregas)</p>
+<h1>Entregable 5: Reporte de Participación del Proyecto</h1>
+<p><strong>Universidad Autónoma de Aguascalientes</strong> — Centro de Ciencias Básicas — Departamento de Sistemas de Información<br>
+<strong>Carrera:</strong> Licenciatura en Informática y Tecnologías Computacionales (5° Semestre, Grupo A)<br>
+<strong>Profesor:</strong> Juan Muñoz López<br>
+<strong>Proyecto:</strong> Sistema de Procesamiento y Auditoría de Facturación (Logística y Entregas)</p>
 
-<h2>Tabla de ParticipaciÃ³n y Responsabilidades</h2>
+<h2>Tabla de Participación y Responsabilidades</h2>
 <table>
   <tr>
     <th>Nombre del Alumno</th>
     <th>ID / No. Lista</th>
-    <th>Rol DesempeÃ±ado</th>
-    <th>Partes del Proyecto que GenerÃ³</th>
-    <th>% ParticipaciÃ³n</th>
+    <th>Rol Desempeñado</th>
+    <th>Partes del Proyecto que Generó</th>
+    <th>% Participación</th>
   </tr>
   <tr>
     <td><strong>Gael Zair Limon Rdz</strong></td>
     <td><strong>ID: 555274</strong><br>al555274@edu.uaa.mx<br>f.gzlr55@gmail.com<br>(Grupo A, No. Lista: 21)</td>
     <td>Arquitecto de Software y Desarrollador Full-Stack WinForms</td>
     <td>
-      â€¢ <strong>Capa de Dominio:</strong> DiseÃ±o y encapsulamiento de las clases <code>Paquete.cs</code>, <code>ConfiguracionTarifas.cs</code> y <code>ResultadoProcesamientoLote.cs</code>.<br>
-      â€¢ <strong>Capa de Servicios (LÃ³gica):</strong> ImplementaciÃ³n del algoritmo de sanitizaciÃ³n y parseo tolerante a fallos (Reto 1), redimensionamiento dinÃ¡mico manual de arreglos e inversiÃ³n/ordenamiento Burbuja (Reto 2), cÃ¡lculo financiero escalonado (Reto 3) y diccionario multi-idioma EspaÃ±ol/InglÃ©s (<code>GestorIdioma.cs</code>).<br>
-      â€¢ <strong>Capa de Servicios (Persistencia):</strong> Lectura de <code>appsettings.json</code> (RF1), exportaciÃ³n a CSV con bloques <code>using</code> (RF6) y persistencia en base de datos SQLite (<code>RepositorioBaseDatos.cs</code>).<br>
-      â€¢ <strong>Capa de PresentaciÃ³n (UI):</strong> DiseÃ±o del formulario principal <code>Form1</code>, tabla <code>DataGridView</code>, panel lateral de inspecciÃ³n y pruebas integrales.
+      • <strong>Capa de Dominio:</strong> Diseño y encapsulamiento de las clases <code>Paquete.cs</code>, <code>ConfiguracionTarifas.cs</code> y <code>ResultadoProcesamientoLote.cs</code>.<br>
+      • <strong>Capa de Servicios (Lógica):</strong> Implementación del algoritmo de sanitización y parseo tolerante a fallos (Reto 1), redimensionamiento dinámico manual de arreglos e inversión/ordenamiento Burbuja (Reto 2), cálculo financiero escalonado (Reto 3) y diccionario multi-idioma Español/Inglés (<code>GestorIdioma.cs</code>).<br>
+      • <strong>Capa de Servicios (Persistencia):</strong> Lectura de <code>appsettings.json</code> (RF1), exportación a CSV con bloques <code>using</code> (RF6) y persistencia en base de datos SQLite (<code>RepositorioBaseDatos.cs</code>).<br>
+      • <strong>Capa de Presentación (UI):</strong> Diseño del formulario principal <code>Form1</code>, tabla <code>DataGridView</code>, panel lateral de inspección y pruebas integrales.
     </td>
     <td>100%</td>
   </tr>
