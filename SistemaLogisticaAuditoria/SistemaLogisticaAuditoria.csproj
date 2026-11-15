@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SistemaLogisticaAuditoria</RootNamespace>
+    <AssemblyName>SistemaLogisticaAuditoria</AssemblyName>
+      <Authors>Gael Zair Limon Rdz</Authors>
+    <Company>Gael Zair Limon Rdz</Company>
+    <Copyright>Copyright Â© Gael Zair Limon Rdz</Copyright>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <PathMap>$(MSBuildProjectDirectory)=C:\Proyectos\GaelZairLimonRdz</PathMap>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
