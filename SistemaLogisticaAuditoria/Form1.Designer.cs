@@ -1,4 +1,4 @@
-﻿// Autor: Gael Zair Limon Rdz
+﻿// Autores: Gael Zair Limón Rodríguez, Sebastián Vázquez Hernández y Ervin Axel Rocha Mireles
 namespace SistemaLogisticaAuditoria
 {
     partial class Form1

@@ -7,12 +7,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>SistemaLogisticaAuditoria</RootNamespace>
     <AssemblyName>SistemaLogisticaAuditoria</AssemblyName>
-      <Authors>Gael Zair Limon Rdz</Authors>
-    <Company>Gael Zair Limon Rdz</Company>
-    <Copyright>Copyright © Gael Zair Limon Rdz</Copyright>
+    <Authors>Gael Zair Limón Rodríguez, Sebastián Vázquez Hernández y Ervin Axel Rocha Mireles</Authors>
+    <Company>Equipo de Desarrollo - UAA</Company>
+    <Copyright>Copyright © Gael Zair Limón Rodríguez, Sebastián Vázquez Hernández y Ervin Axel Rocha Mireles</Copyright>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <PathMap>$(MSBuildProjectDirectory)=C:\Proyectos\GaelZairLimonRdz</PathMap>
+    <PathMap>$(MSBuildProjectDirectory)=C:\Proyectos\SistemaLogisticaAuditoria</PathMap>
   </PropertyGroup>
   <ItemGroup>
     <None Update="appsettings.json">

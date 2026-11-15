@@ -1,12 +1,12 @@
 ﻿# Sistema de Procesamiento y Auditoría de Facturación (Logística y Entregas)
 
-Aplicación de escritorio en **C# Windows Forms (`.NET 8.0-windows`)** diseñada bajo una arquitectura en capas (**Presentación**, **Dominio** y **Servicios de Lógica y Persistencia**) para el procesamiento, validación léxica/numérica, cálculo financiero escalonado, auditoría visual, persistencia transaccional en **SQLite** y exportación a **CSV** de lotes de fletes.
+Aplicación de escritorio en **C# Windows Forms (.NET 8.0-windows)** diseñada bajo una arquitectura en capas (**Presentación**, **Dominio** y **Servicios de Lógica y Persistencia**) para el procesamiento, validación léxica/numérica, cálculo financiero escalonado, auditoría visual, persistencia transaccional en **SQLite** y exportación a **CSV** de lotes de fletes.
 
 ## Estructura en Capas del Proyecto
 
 ```text
 Miniproyecto_Logistica/
-├── Miniproyecto_Logistica.slnx
+├── Miniproyecto_Logistica.sln
 └── SistemaLogisticaAuditoria/
     ├── appsettings.json                         # Configuración parametrizada (RF1)
     ├── Program.cs                               # Punto de entrada de la aplicación
@@ -28,8 +28,8 @@ Miniproyecto_Logistica/
 
 ## Requisitos Técnicos
 * **.NET 8.0 SDK** en Windows 10/11.
-* Compatible al 100% con el **Diseñador de Windows Forms de Visual Studio 2022** (`Shift + F7`).
+* Compatible al 100% con el **Diseñador de Windows Forms de Visual Studio 2022** (Shift + F7).
 
-## Repositorio y Autor
-* **Autor:** Gael Zair Limon Rdz (ID: 555274 | l555274@edu.uaa.mx / .gzlr55@gmail.com)
+## Integrantes del Equipo y Repositorio
+* **Integrantes:** Gael Zair Limón Rodríguez, Sebastián Vázquez Hernández y Ervin Axel Rocha Mireles
 * **Repositorio en GitHub:** https://github.com/GZLR121/Miniproyecto2_CSharp
