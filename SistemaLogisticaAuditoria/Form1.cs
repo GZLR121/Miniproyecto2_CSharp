@@ -1,7 +1,9 @@
 ﻿// Autores: Gael Zair Limón Rodríguez, Sebastián Vázquez Hernández y Ervin Axel Rocha Mireles
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows.Forms;
 using SistemaLogisticaAuditoria.Dominio;
 using SistemaLogisticaAuditoria.Servicios.Logica;
@@ -14,11 +16,13 @@ namespace SistemaLogisticaAuditoria
         private readonly ServicioConfiguracionJson _servicioJson;
         private readonly ServicioExportacionCsv _servicioCsv;
         private readonly GestorIdioma _gestorIdioma;
+        private Etiquetas _etiquetasSeleccionadas;
         private ConfiguracionTarifas _configuracion;
         private ServicioCalculoFinanciero _servicioFinanciero;
         private ServicioProcesamientoLotes _servicioLotes;
         private RepositorioBaseDatos _repositorioBd;
         private ResultadoProcesamientoLote? _resultadoActual;
+        private bool _actualizandoComboIdioma;
 
         public Form1()
         {
@@ -28,6 +32,7 @@ namespace SistemaLogisticaAuditoria
             _servicioJson = new ServicioConfiguracionJson(rutaJson);
             _servicioCsv = new ServicioExportacionCsv();
             _gestorIdioma = new GestorIdioma();
+            _etiquetasSeleccionadas = _gestorIdioma.EtiquetasSeleccionadas;
 
             // RF1: Lectura obligatoria del archivo JSON al iniciar el programa
             _configuracion = _servicioJson.CargarConfiguracion();
@@ -37,16 +42,102 @@ namespace SistemaLogisticaAuditoria
 
             ConfigurarColumnasTabla();
             CargarLoteEjemploEnCaja();
-            cmbIdioma.SelectedIndex = 0; // Español por defecto
-            ActualizarBannerConfiguracion();
+
+            // RF2: Carga las etiquetas desde Recursos\etiquetas.json (Español, English, Français, Deutsch, Português)
+            CargarEtiquetas(0);
 
             if (!_servicioJson.ExistiaArchivoAlIniciar)
             {
                 MessageBox.Show(
-                    _gestorIdioma.ObtenerTexto("MsgJsonFaltante"),
+                    _etiquetasSeleccionadas.MsgJsonFaltante,
                     "Configuración JSON (RF1)",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
+            }
+        }
+
+        /**
+         * El siguiente método permite cargar las etiquetas de la interfaz de usuario desde Recursos\etiquetas.json.
+         * Recibe un índice de lenguaje y carga las etiquetas correspondientes en los controles de la interfaz.
+         */
+        public void CargarEtiquetas(int indiceLenguaje)
+        {
+            string archivo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Recursos", "etiquetas.json");
+            if (!File.Exists(archivo))
+            {
+                archivo = "Recursos\\etiquetas.json";
+            }
+
+            if (!File.Exists(archivo))
+            {
+                MessageBox.Show("No se encontró el archivo de etiquetas de idioma (Recursos\\etiquetas.json).");
+                return;
+            }
+
+            try
+            {
+                string jsonString = File.ReadAllText(archivo, Encoding.UTF8);
+                List<Etiquetas>? etiquetas = JsonSerializer.Deserialize<List<Etiquetas>>(jsonString);
+                if (etiquetas == null || etiquetas.Count == 0)
+                    return;
+
+                _actualizandoComboIdioma = true;
+                cmbIdioma.Items.Clear();
+                foreach (var etiqueta in etiquetas)
+                {
+                    cmbIdioma.Items.Add(etiqueta.Idioma);
+                }
+                if (indiceLenguaje < 0 || indiceLenguaje >= etiquetas.Count)
+                {
+                    indiceLenguaje = 0;
+                }
+                cmbIdioma.SelectedIndex = indiceLenguaje;
+                _actualizandoComboIdioma = false;
+
+                _etiquetasSeleccionadas = _gestorIdioma.SeleccionarLenguaje(indiceLenguaje);
+
+                this.Text = _etiquetasSeleccionadas.TituloVentana;
+                lblIdioma.Text = _etiquetasSeleccionadas.LblIdioma;
+                btnCargarEjemplo.Text = _etiquetasSeleccionadas.BtnCargarEjemplo;
+                grpCaptura.Text = _etiquetasSeleccionadas.GrpCaptura;
+                btnProcesar.Text = _etiquetasSeleccionadas.BtnProcesar;
+                btnInvertir.Text = _etiquetasSeleccionadas.BtnInvertir;
+                btnMarcarRecibido.Text = _etiquetasSeleccionadas.BtnMarcarRecibido;
+                btnExportarCsv.Text = _etiquetasSeleccionadas.BtnExportarCsv;
+                btnHistorialBd.Text = _etiquetasSeleccionadas.BtnHistorialBd;
+                grpTabla.Text = _etiquetasSeleccionadas.GrpTabla;
+                grpBitacora.Text = _etiquetasSeleccionadas.GrpBitacora;
+                grpInspeccion.Text = _etiquetasSeleccionadas.GrpInspeccion;
+
+                if (dgvPaquetes.Columns.Count >= 13)
+                {
+                    dgvPaquetes.Columns[0].HeaderText = _etiquetasSeleccionadas.ColCodigo;
+                    dgvPaquetes.Columns[1].HeaderText = _etiquetasSeleccionadas.ColCliente;
+                    dgvPaquetes.Columns[2].HeaderText = _etiquetasSeleccionadas.ColZona;
+                    dgvPaquetes.Columns[3].HeaderText = _etiquetasSeleccionadas.ColPeso;
+                    dgvPaquetes.Columns[4].HeaderText = _etiquetasSeleccionadas.ColValor;
+                    dgvPaquetes.Columns[5].HeaderText = _etiquetasSeleccionadas.ColSubPeso;
+                    dgvPaquetes.Columns[6].HeaderText = _etiquetasSeleccionadas.ColRecargo;
+                    dgvPaquetes.Columns[7].HeaderText = _etiquetasSeleccionadas.ColPenal;
+                    dgvPaquetes.Columns[8].HeaderText = _etiquetasSeleccionadas.ColSeguro;
+                    dgvPaquetes.Columns[9].HeaderText = _etiquetasSeleccionadas.ColSubNeto;
+                    dgvPaquetes.Columns[10].HeaderText = _etiquetasSeleccionadas.ColIVA;
+                    dgvPaquetes.Columns[11].HeaderText = _etiquetasSeleccionadas.ColTotal;
+                    dgvPaquetes.Columns[12].HeaderText = _etiquetasSeleccionadas.ColEstado;
+                }
+
+                ActualizarBannerConfiguracion();
+
+                if (_resultadoActual != null)
+                {
+                    ActualizarResumenLote(_resultadoActual);
+                    ProyectarPaqueteSeleccionado();
+                }
+            }
+            catch (JsonException er)
+            {
+                _actualizandoComboIdioma = false;
+                MessageBox.Show("Error al leer el archivo JSON de idiomas: " + er.Message);
             }
         }
 
@@ -85,9 +176,6 @@ namespace SistemaLogisticaAuditoria
 
         public void CargarLoteEjemploEnCaja()
         {
-            // Incluye los casos exactos de Reto 1 (espacios sobrantes, peso negativo en PACK-002, texto ABC en PACK-003)
-            // y 7 paquetes válidos (> 5) para demostrar el redimensionamiento manual de 5 a 10 elementos del Reto 2,
-            // además de sobrepeso (>20 kg) y seguro de valor declarado (>$1,000.00) del Reto 3.
             string[] lineas = new[]
             {
                 " COD-101 ; Cliente Juan Perez ; Zona A ; 15.5 ; 200.0 ",
@@ -105,63 +193,22 @@ namespace SistemaLogisticaAuditoria
 
         private void ActualizarBannerConfiguracion()
         {
-            if (_gestorIdioma.EsIngles)
-            {
-                lblConfigJson.Text =
-                    $"[JSON RF1: appsettings.json] Base/kg: ${_configuracion.PrecioBasePorKg:N2} | VAT: {_configuracion.TasaIVA * 100:F0}% | Fixed: ${_configuracion.CostoFijoEnvio:N2} | >{_configuracion.PesoLimiteKg}kg (+25%) | >${_configuracion.MontoMinimoSeguro:N0} (+2%) | DB: {_configuracion.RutaBaseDatos}";
-            }
-            else
-            {
-                lblConfigJson.Text =
-                    $"[JSON RF1: appsettings.json] Base/kg: ${_configuracion.PrecioBasePorKg:N2} | IVA: {_configuracion.TasaIVA * 100:F0}% | Fijo: ${_configuracion.CostoFijoEnvio:N2} | >{_configuracion.PesoLimiteKg}kg (+25%) | >${_configuracion.MontoMinimoSeguro:N0} (+2%) | BD: {_configuracion.RutaBaseDatos}";
-            }
+            lblConfigJson.Text =
+                $"[JSON RF1: appsettings.json] Base/kg: ${_configuracion.PrecioBasePorKg:N2} | {_etiquetasSeleccionadas.ColIVA}: {_configuracion.TasaIVA * 100:F0}% | Fijo: ${_configuracion.CostoFijoEnvio:N2} | >{_configuracion.PesoLimiteKg}kg (+25%) | >${_configuracion.MontoMinimoSeguro:N0} (+2%) | BD: {_configuracion.RutaBaseDatos}";
         }
 
-        // RF2: Evento de cambio dinámico de idioma Español / Inglés
+        /**
+         * El siguiente método permite cambiar el idioma de la interfaz de usuario (RF2).
+         * Se ejecuta cuando se selecciona un nuevo idioma en el combo box cmbIdioma.
+         */
         private void cmbIdioma_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _gestorIdioma.EsIngles = (cmbIdioma.SelectedIndex == 1);
-            AplicarIdiomaEnPantalla();
-        }
+            if (_actualizandoComboIdioma)
+                return;
 
-        private void AplicarIdiomaEnPantalla()
-        {
-            this.Text = _gestorIdioma.ObtenerTexto("TituloVentana");
-            lblIdioma.Text = _gestorIdioma.ObtenerTexto("LblIdioma");
-            btnCargarEjemplo.Text = _gestorIdioma.ObtenerTexto("BtnCargarEjemplo");
-            grpCaptura.Text = _gestorIdioma.ObtenerTexto("GrpCaptura");
-            btnProcesar.Text = _gestorIdioma.ObtenerTexto("BtnProcesar");
-            btnInvertir.Text = _gestorIdioma.ObtenerTexto("BtnInvertir");
-            btnMarcarRecibido.Text = _gestorIdioma.ObtenerTexto("BtnMarcarRecibido");
-            btnExportarCsv.Text = _gestorIdioma.ObtenerTexto("BtnExportarCsv");
-            btnHistorialBd.Text = _gestorIdioma.ObtenerTexto("BtnHistorialBd");
-            grpTabla.Text = _gestorIdioma.ObtenerTexto("GrpTabla");
-            grpBitacora.Text = _gestorIdioma.ObtenerTexto("GrpBitacora");
-            grpInspeccion.Text = _gestorIdioma.ObtenerTexto("GrpInspeccion");
-
-            if (dgvPaquetes.Columns.Count >= 13)
+            if (cmbIdioma.SelectedIndex >= 0)
             {
-                dgvPaquetes.Columns[0].HeaderText = _gestorIdioma.ObtenerTexto("ColCodigo");
-                dgvPaquetes.Columns[1].HeaderText = _gestorIdioma.ObtenerTexto("ColCliente");
-                dgvPaquetes.Columns[2].HeaderText = _gestorIdioma.ObtenerTexto("ColZona");
-                dgvPaquetes.Columns[3].HeaderText = _gestorIdioma.ObtenerTexto("ColPeso");
-                dgvPaquetes.Columns[4].HeaderText = _gestorIdioma.ObtenerTexto("ColValor");
-                dgvPaquetes.Columns[5].HeaderText = _gestorIdioma.ObtenerTexto("ColSubPeso");
-                dgvPaquetes.Columns[6].HeaderText = _gestorIdioma.ObtenerTexto("ColRecargo");
-                dgvPaquetes.Columns[7].HeaderText = _gestorIdioma.ObtenerTexto("ColPenal");
-                dgvPaquetes.Columns[8].HeaderText = _gestorIdioma.ObtenerTexto("ColSeguro");
-                dgvPaquetes.Columns[9].HeaderText = _gestorIdioma.ObtenerTexto("ColSubNeto");
-                dgvPaquetes.Columns[10].HeaderText = _gestorIdioma.ObtenerTexto("ColIVA");
-                dgvPaquetes.Columns[11].HeaderText = _gestorIdioma.ObtenerTexto("ColTotal");
-                dgvPaquetes.Columns[12].HeaderText = _gestorIdioma.ObtenerTexto("ColEstado");
-            }
-
-            ActualizarBannerConfiguracion();
-
-            if (_resultadoActual != null)
-            {
-                ActualizarResumenLote(_resultadoActual);
-                ProyectarPaqueteSeleccionado();
+                CargarEtiquetas(cmbIdioma.SelectedIndex);
             }
         }
 
@@ -174,7 +221,7 @@ namespace SistemaLogisticaAuditoria
         {
             try
             {
-                _resultadoActual = _servicioLotes.ProcesarTextoLote(txtLoteEntrada.Text, _gestorIdioma.EsIngles);
+                _resultadoActual = _servicioLotes.ProcesarTextoLote(txtLoteEntrada.Text, _gestorIdioma.IndiceLenguajeActual != 0);
 
                 // Guardar las transacciones de envío en la Base de Datos (RF4)
                 _repositorioBd.GuardarLoteEnBaseDatos(_resultadoActual.PaquetesValidos);
@@ -234,7 +281,7 @@ namespace SistemaLogisticaAuditoria
 
             if (resultado.ErroresDetectados.Length > 0)
             {
-                lstBitacoraErrores.Items.Add(_gestorIdioma.EsIngles
+                lstBitacoraErrores.Items.Add(_gestorIdioma.IndiceLenguajeActual != 0
                     ? $"--- PARALLEL DISCARDED ERROR ARRAY ({resultado.ErroresDetectados.Length} corrupt lines) ---"
                     : $"--- ARREGLO PARALELO DE ERRORES DESCARTADOS ({resultado.ErroresDetectados.Length} líneas corruptas) ---");
 
@@ -247,28 +294,7 @@ namespace SistemaLogisticaAuditoria
 
         private void ActualizarResumenLote(ResultadoProcesamientoLote r)
         {
-            StringBuilder sb = new StringBuilder();
-            if (_gestorIdioma.EsIngles)
-            {
-                sb.AppendLine("=== BATCH FINANCIAL SUMMARY (FR4) ===");
-                sb.AppendLine($"• Valid Packages:     {r.PaquetesValidos.Length}  |  Discarded Errors: {r.ErroresDetectados.Length}");
-                sb.AppendLine($"• 2D Matrix Size:     string[{r.MatrizSegmentada.GetLength(0)}, {r.MatrizSegmentada.GetLength(1)}]");
-                sb.AppendLine($"• Total Batch Weight: {r.SumaPesoTotal:F2} kg");
-                sb.AppendLine($"• Net Subtotal:       ${r.SumaSubtotalNeto:N2}");
-                sb.AppendLine($"• Total VAT (IVA):    ${r.SumaIVA:N2}");
-                sb.AppendLine($">> GRAND TOTAL:       ${r.GranTotalFacturado:N2}");
-            }
-            else
-            {
-                sb.AppendLine("=== RESUMEN FINANCIERO DEL LOTE (RF4) ===");
-                sb.AppendLine($"• Paquetes Válidos:   {r.PaquetesValidos.Length}  |  Errores Descartados: {r.ErroresDetectados.Length}");
-                sb.AppendLine($"• Matriz 2D Creada:   string[{r.MatrizSegmentada.GetLength(0)}, {r.MatrizSegmentada.GetLength(1)}]");
-                sb.AppendLine($"• Peso Total Lote:    {r.SumaPesoTotal:F2} kg");
-                sb.AppendLine($"• Subtotal Neto Lote: ${r.SumaSubtotalNeto:N2}");
-                sb.AppendLine($"• Total IVA Lote:     ${r.SumaIVA:N2}");
-                sb.AppendLine($">> GRAN TOTAL LOTE:   ${r.GranTotalFacturado:N2}");
-            }
-            txtTotalesLote.Text = sb.ToString();
+            txtTotalesLote.Text = _gestorIdioma.FormatearResumenLote(r);
         }
 
         // RF5: Evento de clic o cambio de fila seleccionada en DataGridView para proyectar el desglose en el panel lateral
@@ -307,13 +333,13 @@ namespace SistemaLogisticaAuditoria
         {
             if (_resultadoActual == null || _resultadoActual.PaquetesValidos.Length == 0)
             {
-                MessageBox.Show(_gestorIdioma.ObtenerTexto("MsgSinPaquetes"), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(_etiquetasSeleccionadas.MsgSinPaquetes, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             ServicioProcesamientoLotes.InvertirArregloPaquetes(_resultadoActual.PaquetesValidos);
             PoblarTablaPaquetes(_resultadoActual.PaquetesValidos);
-            lstBitacoraErrores.Items.Insert(0, _gestorIdioma.EsIngles
+            lstBitacoraErrores.Items.Insert(0, _gestorIdioma.IndiceLenguajeActual != 0
                 ? "[Reverse] Package array manually inverted using index swap."
                 : "[Inversión] Arreglo de paquetes invertido manualmente intercambiando extremos.");
             ProyectarPaquetePorIndice(0);
@@ -324,7 +350,7 @@ namespace SistemaLogisticaAuditoria
         {
             if (_resultadoActual == null || dgvPaquetes.CurrentRow == null)
             {
-                MessageBox.Show(_gestorIdioma.ObtenerTexto("MsgSeleccioneFila"), "Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(_etiquetasSeleccionadas.MsgSeleccioneFila, "Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -333,13 +359,16 @@ namespace SistemaLogisticaAuditoria
                 return;
 
             Paquete p = _resultadoActual.PaquetesValidos[idx];
-            p.EstadoTransaccion = "RECIBIDO EN DESTINO";
+            string nuevoEstado = (_etiquetasSeleccionadas.EstadosTransaccion != null && _etiquetasSeleccionadas.EstadosTransaccion.Count >= 3)
+                ? _etiquetasSeleccionadas.EstadosTransaccion[2]
+                : "RECIBIDO EN DESTINO";
+            p.EstadoTransaccion = nuevoEstado;
             _repositorioBd.ActualizarEstadoRecepcion(p.Codigo, p.EstadoTransaccion);
 
             dgvPaquetes.Rows[idx].Cells["colEstado"].Value = p.EstadoTransaccion;
             ProyectarPaquetePorIndice(idx);
 
-            lstBitacoraErrores.Items.Insert(0, $"[BD SQL] UPDATE EstadoTransaccion = 'RECIBIDO EN DESTINO' WHERE CodigoPaquete = '{p.Codigo}'");
+            lstBitacoraErrores.Items.Insert(0, $"[BD SQL] UPDATE EstadoTransaccion = '{nuevoEstado}' WHERE CodigoPaquete = '{p.Codigo}'");
         }
 
         // RF6: Exportación de reportes a CSV mediante SaveFileDialog
@@ -347,21 +376,21 @@ namespace SistemaLogisticaAuditoria
         {
             if (_resultadoActual == null || _resultadoActual.PaquetesValidos.Length == 0)
             {
-                MessageBox.Show(_gestorIdioma.ObtenerTexto("MsgSinPaquetes"), "Exportar CSV", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(_etiquetasSeleccionadas.MsgSinPaquetes, "Exportar CSV", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             using (SaveFileDialog dialogoGuardar = new SaveFileDialog())
             {
                 dialogoGuardar.Filter = "Archivos CSV (*.csv)|*.csv|Todos los archivos (*.*)|*.*";
-                dialogoGuardar.Title = _gestorIdioma.EsIngles ? "Export Audit Report to CSV" : "Exportar Reporte de Auditoría a CSV";
+                dialogoGuardar.Title = _etiquetasSeleccionadas.BtnExportarCsv;
                 dialogoGuardar.FileName = $"Auditoria_Fletes_{DateTime.Now:yyyyMMdd_HHmm}.csv";
 
                 if (dialogoGuardar.ShowDialog(this) == DialogResult.OK)
                 {
                     ExportarCsvDirecto(dialogoGuardar.FileName);
                     MessageBox.Show(
-                        _gestorIdioma.ObtenerTexto("MsgCsvExito") + dialogoGuardar.FileName,
+                        _etiquetasSeleccionadas.MsgCsvExito + dialogoGuardar.FileName,
                         "CSV (RF6)",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -381,12 +410,8 @@ namespace SistemaLogisticaAuditoria
         {
             string[] registros = _repositorioBd.ConsultarUltimasTransacciones(30);
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(_gestorIdioma.EsIngles
-                ? $"=== SQLITE DATABASE TRANSACTIONS ({_configuracion.RutaBaseDatos}) ==="
-                : $"=== TRANSACCIONES EN BASE DE DATOS SQLITE ({_configuracion.RutaBaseDatos}) ===");
-            sb.AppendLine(_gestorIdioma.EsIngles
-                ? $"Total records retrieved: {registros.Length}"
-                : $"Total de registros recuperados: {registros.Length}");
+            sb.AppendLine($"=== SQLITE DB ({_configuracion.RutaBaseDatos}) ===");
+            sb.AppendLine($"Total: {registros.Length}");
             sb.AppendLine("--------------------------------------------");
 
             for (int i = 0; i < registros.Length; i++)

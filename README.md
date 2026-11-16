@@ -9,10 +9,13 @@ Miniproyecto_Logistica/
 ├── Miniproyecto_Logistica.sln
 └── SistemaLogisticaAuditoria/
     ├── appsettings.json                         # Configuración parametrizada (RF1)
+    ├── Recursos/
+    │   └── etiquetas.json                       # Etiquetas multi-idioma (Español, English, Français, Deutsch, Português)
     ├── Program.cs                               # Punto de entrada de la aplicación
     ├── Form1.cs / Form1.Designer.cs             # Capa de Presentación (UI Multi-Idioma ES/EN y Eventos)
     ├── Dominio/                                 # Capa de Dominio (Modelos con encapsulamiento estricto)
     │   ├── ConfiguracionTarifas.cs
+    │   ├── Etiquetas.cs
     │   ├── Paquete.cs
     │   └── ResultadoProcesamientoLote.cs
     └── Servicios/                               # Capa de Servicios

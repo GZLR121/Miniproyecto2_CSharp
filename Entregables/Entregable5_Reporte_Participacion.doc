@@ -63,7 +63,7 @@
     <td>Lógica Financiera y Sistema Multi-Idioma</td>
     <td>
       • <strong>Reto 3 (<code>ServicioCalculoFinanciero.cs</code>):</strong> Algoritmo de cálculo de impuestos escalonados, recargos regionales por zona (Zona A 5%, Zona B 10%, Zona C 18%), penalización por sobrepeso (&gt; 20 kg) y seguro obligatorio (&gt; $1,000.00).<br>
-      • <strong>RF2 (<code>GestorIdioma.cs</code>):</strong> Diccionario dinámico Español / Inglés para actualización en tiempo real de controles, encabezados y diálogos.
+      • <strong>RF2 (<code>GestorIdioma.cs</code>):</strong> Sistema multi-idioma basado en <code>Etiquetas.cs</code> y <code>Recursos\etiquetas.json</code> (Español, English, Français, Deutsch y Português) para actualización en tiempo real de controles, encabezados y diálogos.
     </td>
     <td style="text-align:center;"><strong>33.33%</strong><br>(100% de su módulo)</td>
   </tr>
