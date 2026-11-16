@@ -144,6 +144,13 @@ namespace SistemaLogisticaAuditoria
                         dgvPaquetes.Rows[filaSeleccionada].Selected = true;
                         dgvPaquetes.CurrentCell = dgvPaquetes.Rows[filaSeleccionada].Cells[0];
                     }
+                    if (!string.IsNullOrWhiteSpace(txtLoteEntrada.Text))
+                    {
+                        ResultadoProcesamientoLote tempLoc = _servicioLotes.ProcesarTextoLote(txtLoteEntrada.Text, indiceLenguaje);
+                        _resultadoActual.BitacoraArreglos = tempLoc.BitacoraArreglos;
+                        _resultadoActual.ErroresDetectados = tempLoc.ErroresDetectados;
+                    }
+                    PoblarBitacoraYErrores(_resultadoActual);
                     ActualizarResumenLote(_resultadoActual);
                     ProyectarPaquetePorIndice(filaSeleccionada);
                 }
@@ -235,7 +242,7 @@ namespace SistemaLogisticaAuditoria
         {
             try
             {
-                _resultadoActual = _servicioLotes.ProcesarTextoLote(txtLoteEntrada.Text, _gestorIdioma.IndiceLenguajeActual != 0);
+                _resultadoActual = _servicioLotes.ProcesarTextoLote(txtLoteEntrada.Text, _gestorIdioma.IndiceLenguajeActual);
 
                 // Guardar las transacciones de envío en la Base de Datos (RF4)
                 for (int i = 0; i < _resultadoActual.PaquetesValidos.Length; i++)
@@ -299,9 +306,15 @@ namespace SistemaLogisticaAuditoria
 
             if (resultado.ErroresDetectados.Length > 0)
             {
-                lstBitacoraErrores.Items.Add(_gestorIdioma.IndiceLenguajeActual != 0
-                    ? $"--- PARALLEL DISCARDED ERROR ARRAY ({resultado.ErroresDetectados.Length} corrupt lines) ---"
-                    : $"--- ARREGLO PARALELO DE ERRORES DESCARTADOS ({resultado.ErroresDetectados.Length} líneas corruptas) ---");
+                string encErrores = _gestorIdioma.IndiceLenguajeActual switch
+                {
+                    1 => $"--- PARALLEL DISCARDED ERROR ARRAY ({resultado.ErroresDetectados.Length} corrupt lines) ---",
+                    2 => $"--- TABLEAU PARALLÈLE D'ERREURS REJETÉES ({resultado.ErroresDetectados.Length} lignes corrompues) ---",
+                    3 => $"--- PARALLELES FEHLER-ARRAY ({resultado.ErroresDetectados.Length} fehlerhafte Zeilen) ---",
+                    4 => $"--- VETOR PARALELO DE ERROS REJEITADOS ({resultado.ErroresDetectados.Length} linhas corrompidas) ---",
+                    _ => $"--- ARREGLO PARALELO DE ERRORES DESCARTADOS ({resultado.ErroresDetectados.Length} líneas corruptas) ---"
+                };
+                lstBitacoraErrores.Items.Add(encErrores);
 
                 for (int i = 0; i < resultado.ErroresDetectados.Length; i++)
                 {
@@ -357,9 +370,15 @@ namespace SistemaLogisticaAuditoria
 
             ServicioProcesamientoLotes.InvertirArregloPaquetes(_resultadoActual.PaquetesValidos);
             PoblarTablaPaquetes(_resultadoActual.PaquetesValidos);
-            lstBitacoraErrores.Items.Insert(0, _gestorIdioma.IndiceLenguajeActual != 0
-                ? "[Reverse] Package array manually inverted using index swap."
-                : "[Inversión] Arreglo de paquetes invertido manualmente intercambiando extremos.");
+            string msgInv = _gestorIdioma.IndiceLenguajeActual switch
+            {
+                1 => "[Reverse] Package array manually inverted using index swap.",
+                2 => "[Inversion] Tableau de colis inversé manuellement en échangeant les extrémités.",
+                3 => "[Umkehrung] Paket-Array manuell durch Index-Tausch umgekehrt.",
+                4 => "[Inversão] Vetor de encomendas invertido manualmente trocando as extremidades.",
+                _ => "[Inversión] Arreglo de paquetes invertido manualmente intercambiando extremos."
+            };
+            lstBitacoraErrores.Items.Insert(0, msgInv);
             ProyectarPaquetePorIndice(0);
         }
 

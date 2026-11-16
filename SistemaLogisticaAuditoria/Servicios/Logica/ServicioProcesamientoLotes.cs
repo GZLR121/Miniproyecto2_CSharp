@@ -21,13 +21,23 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             _servicioFinanciero = servicioFinanciero ?? throw new ArgumentNullException(nameof(servicioFinanciero));
         }
 
-        public ResultadoProcesamientoLote ProcesarTextoLote(string textoMultilinea, bool idiomaIngles = false)
+        public ResultadoProcesamientoLote ProcesarTextoLote(string textoMultilinea, bool idiomaIngles)
+        {
+            return ProcesarTextoLote(textoMultilinea, idiomaIngles ? 1 : 0);
+        }
+
+        public ResultadoProcesamientoLote ProcesarTextoLote(string textoMultilinea, int indiceLenguaje = 0)
         {
             if (string.IsNullOrWhiteSpace(textoMultilinea))
             {
-                throw new ArgumentException(idiomaIngles
-                    ? "The batch input text cannot be empty."
-                    : "El texto del lote de entrada no puede estar vacío.");
+                throw new ArgumentException(indiceLenguaje switch
+                {
+                    1 => "The batch input text cannot be empty.",
+                    2 => "Le texte du lot d'entrée ne peut pas être vide.",
+                    3 => "Der Eingabetext der Charge darf nicht leer sein.",
+                    4 => "O texto do lote de entrada não pode estar vazio.",
+                    _ => "El texto del lote de entrada no puede estar vacío."
+                });
             }
 
             // Normalización de saltos de línea y segmentación por líneas
@@ -48,9 +58,14 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             string[,] matrizSegmentada = new string[lineasCrudas.Length, 5];
 
             RegistrarEnArregloTexto(ref arregloBitacora, ref conteoBitacora,
-                idiomaIngles
-                    ? $"[Init] Static array 'Paquete[] arregloBase' initialized with fixed capacity = {arregloBase.Length}."
-                    : $"[Inicio] Arreglo estático 'Paquete[] arregloBase' inicializado con capacidad fija = {arregloBase.Length}.");
+                indiceLenguaje switch
+                {
+                    1 => $"[Init] Static array 'Paquete[] arregloBase' initialized with fixed capacity = {arregloBase.Length}.",
+                    2 => $"[Début] Tableau statique 'Paquete[] arregloBase' initialisé avec capacité fixe = {arregloBase.Length}.",
+                    3 => $"[Start] Statisches Array 'Paquete[] arregloBase' initialisiert mit fester Kapazität = {arregloBase.Length}.",
+                    4 => $"[Início] Vetor estático 'Paquete[] arregloBase' inicializado com capacidade fixa = {arregloBase.Length}.",
+                    _ => $"[Inicio] Arreglo estático 'Paquete[] arregloBase' inicializado con capacidad fija = {arregloBase.Length}."
+                });
 
             // Recorrido línea por línea mediante ciclo controlado por contador (Reto 1)
             for (int numLinea = 0; numLinea < lineasCrudas.Length; numLinea++)
@@ -61,9 +76,14 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                 if (string.IsNullOrWhiteSpace(lineaOriginal))
                 {
                     RegistrarEnArregloTexto(ref arregloErrores, ref conteoErrores,
-                        idiomaIngles
-                            ? $"Line {numLinea + 1}: Empty line ignored."
-                            : $"Línea {numLinea + 1}: Línea vacía descartada.");
+                        indiceLenguaje switch
+                        {
+                            1 => $"Line {numLinea + 1}: Empty line ignored.",
+                            2 => $"Ligne {numLinea + 1} : Ligne vide ignorée.",
+                            3 => $"Zeile {numLinea + 1}: Leere Zeile verworfen.",
+                            4 => $"Linha {numLinea + 1}: Linha vazia descartada.",
+                            _ => $"Línea {numLinea + 1}: Línea vacía descartada."
+                        });
                     continue;
                 }
 
@@ -81,9 +101,14 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
 
                     if (campos.Length != 5)
                     {
-                        throw new FormatException(idiomaIngles
-                            ? $"Invalid syntax ({campos.Length} fields found, 5 expected separated by ';')."
-                            : $"Sintaxis inválida (se encontraron {campos.Length} campos, se esperaban 5 separados por ';').");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Invalid syntax ({campos.Length} fields found, 5 expected separated by ';').",
+                            2 => $"Syntaxe invalide ({campos.Length} champs trouvés, 5 attendus séparés par ';').",
+                            3 => $"Ungültige Syntax ({campos.Length} Felder gefunden, 5 getrennt durch ';' erwartet).",
+                            4 => $"Sintaxe inválida ({campos.Length} campos encontrados, esperados 5 separados por ';').",
+                            _ => $"Sintaxis inválida (se encontraron {campos.Length} campos, se esperaban 5 separados por ';')."
+                        });
                     }
 
                     // Extracción y limpieza de cada campo con métodos de cadenas
@@ -96,52 +121,87 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                     // Validación léxica del código (ej. COD-101 o PACK-001)
                     if (!ValidarCodigoLexico(codigo))
                     {
-                        throw new FormatException(idiomaIngles
-                            ? $"Invalid package code '{codigo}' (expected format PREFIX-NNN, e.g. PACK-001 or COD-101)."
-                            : $"Código de paquete inválido '{codigo}' (formato esperado PREFIJO-NNN, ej. PACK-001 o COD-101).");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Invalid package code '{codigo}' (expected format PREFIX-NNN, e.g. PACK-001 or COD-101).",
+                            2 => $"Code de colis invalide '{codigo}' (format attendu PREFIXE-NNN, ex. PACK-001 ou COD-101).",
+                            3 => $"Ungültiger Paketcode '{codigo}' (erwartetes Format PRÄFIX-NNN, z.B. PACK-001 oder COD-101).",
+                            4 => $"Código de encomenda inválido '{codigo}' (formato esperado PREFIXO-NNN, ex. PACK-001 ou COD-101).",
+                            _ => $"Código de paquete inválido '{codigo}' (formato esperado PREFIJO-NNN, ej. PACK-001 o COD-101)."
+                        });
                     }
 
                     if (string.IsNullOrWhiteSpace(cliente) || cliente.Length < 2)
                     {
-                        throw new FormatException(idiomaIngles
-                            ? "Client name is empty or too short."
-                            : "El nombre del cliente está vacío o es demasiado corto.");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => "Client name is empty or too short.",
+                            2 => "Le nom du destinataire est vide ou trop court.",
+                            3 => "Der Kundenname ist leer oder zu kurz.",
+                            4 => "O nome do destinatário está vazio ou é muito curto.",
+                            _ => "El nombre del cliente está vacío o es demasiado corto."
+                        });
                     }
 
                     if (zona != "ZONA A" && zona != "ZONA B" && zona != "ZONA C")
                     {
-                        throw new FormatException(idiomaIngles
-                            ? $"Invalid zone '{zona}' (must be Zona A, Zona B, or Zona C)."
-                            : $"Zona inválida '{zona}' (debe ser Zona A, Zona B o Zona C).");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Invalid zone '{zona}' (must be Zona A, Zona B, or Zona C).",
+                            2 => $"Secteur invalide '{zona}' (doit être Zona A, Zona B ou Zona C).",
+                            3 => $"Ungültiges Gebiet '{zona}' (muss Zona A, Zona B oder Zona C sein).",
+                            4 => $"Região inválida '{zona}' (deve ser Zona A, Zona B ou Zona C).",
+                            _ => $"Zona inválida '{zona}' (debe ser Zona A, Zona B o Zona C)."
+                        });
                     }
 
                     // Validación numérica de peso y valor declarado
                     if (!double.TryParse(pesoTexto, NumberStyles.Float, CultureInfo.InvariantCulture, out double pesoKg))
                     {
-                        throw new FormatException(idiomaIngles
-                            ? $"Non-numeric weight format ('{campos[3].Trim()}')."
-                            : $"Formato no numérico en el peso ('{campos[3].Trim()}').");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Non-numeric weight format ('{campos[3].Trim()}').",
+                            2 => $"Format de poids non numérique ('{campos[3].Trim()}').",
+                            3 => $"Nicht-numerisches Gewichtsformat ('{campos[3].Trim()}').",
+                            4 => $"Formato não numérico na massa/peso ('{campos[3].Trim()}').",
+                            _ => $"Formato no numérico en el peso ('{campos[3].Trim()}')."
+                        });
                     }
 
                     if (pesoKg <= 0)
                     {
-                        throw new ArgumentOutOfRangeException(nameof(pesoKg), idiomaIngles
-                            ? $"Negative or zero weight ({pesoKg} kg is not allowed)."
-                            : $"Peso negativo o cero ({pesoKg} kg no permitido).");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Negative or zero weight ({pesoKg} kg is not allowed).",
+                            2 => $"Poids négatif ou nul ({pesoKg} kg non autorisé).",
+                            3 => $"Negatives oder Null-Gewicht ({pesoKg} kg nicht zulässig).",
+                            4 => $"Massa/peso negativo ou zero ({pesoKg} kg não permitido).",
+                            _ => $"Peso negativo o cero ({pesoKg} kg no permitido)."
+                        });
                     }
 
                     if (!double.TryParse(valorTexto, NumberStyles.Float, CultureInfo.InvariantCulture, out double valorDeclarado))
                     {
-                        throw new FormatException(idiomaIngles
-                            ? $"Non-numeric declared value ('{campos[4].Trim()}')."
-                            : $"Formato no numérico en el valor declarado ('{campos[4].Trim()}').");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Non-numeric declared value ('{campos[4].Trim()}').",
+                            2 => $"Valeur déclarée non numérique ('{campos[4].Trim()}').",
+                            3 => $"Nicht-numerischer deklarierter Wert ('{campos[4].Trim()}').",
+                            4 => $"Formato não numérico no valor declarado ('{campos[4].Trim()}').",
+                            _ => $"Formato no numérico en el valor declarado ('{campos[4].Trim()}')."
+                        });
                     }
 
                     if (valorDeclarado < 0)
                     {
-                        throw new ArgumentOutOfRangeException(nameof(valorDeclarado), idiomaIngles
-                            ? $"Negative declared value (${valorDeclarado} is not allowed)."
-                            : $"Valor declarado negativo (${valorDeclarado} no permitido).");
+                        throw new FormatException(indiceLenguaje switch
+                        {
+                            1 => $"Negative declared value (${valorDeclarado} is not allowed).",
+                            2 => $"Valeur déclarée négative (${valorDeclarado} non autorisée).",
+                            3 => $"Negativer deklarierter Wert (${valorDeclarado} nicht zulässig).",
+                            4 => $"Valor declarado negativo (${valorDeclarado} não permitido).",
+                            _ => $"Valor declarado negativo (${valorDeclarado} no permitido)."
+                        });
                     }
 
                     // Creación del objeto de dominio y cálculo financiero (Reto 3)
@@ -156,9 +216,14 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                         arregloBase = RedimensionarArregloPaquetes(arregloBase, capacidadAnterior * 2);
 
                         RegistrarEnArregloTexto(ref arregloBitacora, ref conteoBitacora,
-                            idiomaIngles
-                                ? $"[Resize] Capacity exceeded at item #{conteoValidos + 1}: manual resize from {capacidadAnterior} to {arregloBase.Length} elements."
-                                : $"[Redimensionamiento] Capacidad superada en elemento #{conteoValidos + 1}: arreglo duplicado manualmente de {capacidadAnterior} a {arregloBase.Length} posiciones.");
+                            indiceLenguaje switch
+                            {
+                                1 => $"[Resize] Capacity exceeded at item #{conteoValidos + 1}: manual resize from {capacidadAnterior} to {arregloBase.Length} elements.",
+                                2 => $"[Redimensionnement] Capacité dépassée à l'élément #{conteoValidos + 1} : tableau doublé manuellement de {capacidadAnterior} à {arregloBase.Length} positions.",
+                                3 => $"[Größenänderung] Kapazität überschritten bei Element #{conteoValidos + 1}: manuelle Verdopplung von {capacidadAnterior} auf {arregloBase.Length} Elemente.",
+                                4 => $"[Redimensionamento] Capacidade excedida no item #{conteoValidos + 1}: vetor duplicado manualmente de {capacidadAnterior} para {arregloBase.Length} posições.",
+                                _ => $"[Redimensionamiento] Capacidad superada en elemento #{conteoValidos + 1}: arreglo duplicado manualmente de {capacidadAnterior} a {arregloBase.Length} posiciones."
+                            });
                     }
 
                     arregloBase[conteoValidos] = nuevoPaquete;
@@ -167,9 +232,14 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                 catch (Exception ex)
                 {
                     // Reto 1: Descartar la línea corrupta guardándola en el arreglo paralelo de errores sin detener el lote
-                    string mensajeError = idiomaIngles
-                        ? $"Line {numLinea + 1} discarded [{lineaOriginal.Trim()}] -> {ex.Message}"
-                        : $"Línea {numLinea + 1} descartada [{lineaOriginal.Trim()}] -> {ex.Message}";
+                    string mensajeError = indiceLenguaje switch
+                    {
+                        1 => $"Line {numLinea + 1} discarded [{lineaOriginal.Trim()}] -> {ex.Message}",
+                        2 => $"Ligne {numLinea + 1} rejetée [{lineaOriginal.Trim()}] -> {ex.Message}",
+                        3 => $"Zeile {numLinea + 1} verworfen [{lineaOriginal.Trim()}] -> {ex.Message}",
+                        4 => $"Linha {numLinea + 1} rejeitada [{lineaOriginal.Trim()}] -> {ex.Message}",
+                        _ => $"Línea {numLinea + 1} descartada [{lineaOriginal.Trim()}] -> {ex.Message}"
+                    };
 
                     RegistrarEnArregloTexto(ref arregloErrores, ref conteoErrores, mensajeError);
                 }
@@ -182,9 +252,14 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             OrdenarPorCostoDescendenteBurbuja(paquetesFinales);
 
             RegistrarEnArregloTexto(ref arregloBitacora, ref conteoBitacora,
-                idiomaIngles
-                    ? $"[Sort] {paquetesFinales.Length} valid packages sorted descending by Total Cost using Bubble Sort."
-                    : $"[Ordenamiento] {paquetesFinales.Length} paquetes válidos ordenados de mayor a menor Costo Total mediante Burbuja.");
+                indiceLenguaje switch
+                {
+                    1 => $"[Sort] {paquetesFinales.Length} valid packages sorted descending by Total Cost using Bubble Sort.",
+                    2 => $"[Tri] {paquetesFinales.Length} colis valides triés par coût total décroissant via Tri à Bulles.",
+                    3 => $"[Sortierung] {paquetesFinales.Length} gültige Pakete absteigend nach Gesamtkosten mit Bubblesort sortiert.",
+                    4 => $"[Ordenação] {paquetesFinales.Length} encomendas válidas ordenadas do maior ao menor custo via Método Bolha.",
+                    _ => $"[Ordenamiento] {paquetesFinales.Length} paquetes válidos ordenados de mayor a menor Costo Total mediante Burbuja."
+                });
 
             string[] erroresFinales = AjustarTamanoExactoTextos(arregloErrores, conteoErrores);
             string[] bitacoraFinal = AjustarTamanoExactoTextos(arregloBitacora, conteoBitacora);
@@ -201,9 +276,6 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             return resultado;
         }
 
-        /// <summary>
-        /// Reto 2: Algoritmo manual de redimensionamiento de arreglo tradicional copiando elemento por elemento.
-        /// </summary>
         public static Paquete[] RedimensionarArregloPaquetes(Paquete[] origen, int nuevaCapacidad)
         {
             Paquete[] nuevoArreglo = new Paquete[nuevaCapacidad];
@@ -225,10 +297,6 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             return exacto;
         }
 
-        /// <summary>
-        /// Reto 2: Algoritmo de Ordenamiento por Comparación (Burbuja / Bubble Sort)
-        /// que ordena los paquetes de MAYOR a MENOR costo total (TotalPagar).
-        /// </summary>
         public static void OrdenarPorCostoDescendenteBurbuja(Paquete[] arreglo)
         {
             if (arreglo == null || arreglo.Length <= 1)
@@ -249,9 +317,6 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             }
         }
 
-        /// <summary>
-        /// Reto 2: Algoritmo manual de inversión de un arreglo tradicional (intercambiando extremos con índices i y n-1-i).
-        /// </summary>
         public static void InvertirArregloPaquetes(Paquete[] arreglo)
         {
             if (arreglo == null || arreglo.Length <= 1)
@@ -269,9 +334,49 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             }
         }
 
-        private static void RegistrarEnArregloTexto(ref string[] arreglo, ref int conteo, string elemento)
+        private static bool ValidarCodigoLexico(string codigo)
         {
-            if (conteo >= arreglo.Length)
+            if (string.IsNullOrWhiteSpace(codigo) || codigo.Length < 4)
+                return false;
+
+            int indiceGuion = codigo.IndexOf('-');
+            if (indiceGuion <= 0 || indiceGuion >= codigo.Length - 1)
+                return false;
+
+            string prefijo = codigo.Substring(0, indiceGuion);
+            string sufijoNumerico = codigo.Substring(indiceGuion + 1);
+
+            for (int i = 0; i < prefijo.Length; i++)
+            {
+                if (!char.IsLetter(prefijo[i]))
+                    return false;
+            }
+
+            for (int i = 0; i < sufijoNumerico.Length; i++)
+            {
+                if (!char.IsDigit(sufijoNumerico[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static string SanitizarEspaciosMultiples(string entrada)
+        {
+            if (string.IsNullOrEmpty(entrada))
+                return string.Empty;
+
+            string resultado = entrada.Trim();
+            while (resultado.Contains("  "))
+            {
+                resultado = resultado.Replace("  ", " ");
+            }
+            return resultado;
+        }
+
+        private static void RegistrarEnArregloTexto(ref string[] arreglo, ref int contador, string valor)
+        {
+            if (contador >= arreglo.Length)
             {
                 string[] nuevo = new string[arreglo.Length * 2];
                 for (int i = 0; i < arreglo.Length; i++)
@@ -280,8 +385,8 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                 }
                 arreglo = nuevo;
             }
-            arreglo[conteo] = elemento;
-            conteo++;
+            arreglo[contador] = valor;
+            contador++;
         }
 
         private static string[] AjustarTamanoExactoTextos(string[] origen, int cantidad)
@@ -292,39 +397,6 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                 exacto[i] = origen[i];
             }
             return exacto;
-        }
-
-        private static string SanitizarEspaciosMultiples(string texto)
-        {
-            while (texto.Contains("  "))
-            {
-                texto = texto.Replace("  ", " ");
-            }
-            return texto;
-        }
-
-        private static bool ValidarCodigoLexico(string codigo)
-        {
-            if (string.IsNullOrWhiteSpace(codigo) || !codigo.Contains('-'))
-                return false;
-
-            string[] partes = codigo.Split('-');
-            if (partes.Length != 2 || partes[0].Length < 2 || partes[1].Length < 1)
-                return false;
-
-            for (int i = 0; i < partes[0].Length; i++)
-            {
-                if (!char.IsLetterOrDigit(partes[0][i]))
-                    return false;
-            }
-
-            for (int i = 0; i < partes[1].Length; i++)
-            {
-                if (!char.IsDigit(partes[1][i]))
-                    return false;
-            }
-
-            return true;
         }
     }
 }
