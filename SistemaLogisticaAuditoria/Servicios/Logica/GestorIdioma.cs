@@ -40,9 +40,6 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             set => SeleccionarLenguaje(value ? 1 : 0);
         }
 
-        /**
-         * Carga la lista de idiomas desde Recursos\etiquetas.json mediante JsonSerializer.Deserialize<List<Etiquetas>>.
-         */
         public void CargarArchivoEtiquetas()
         {
             string archivo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Recursos", "etiquetas.json");
@@ -64,7 +61,6 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                 }
             }
 
-            // Respaldo en memoria en caso de que se ejecute desde un directorio sin Recursos\etiquetas.json
             _etiquetasSeleccionadas = new Etiquetas { Idioma = "Español", TituloVentana = "Sistema de Procesamiento y Auditoría de Facturación" };
             _listaEtiquetas = new List<Etiquetas> { _etiquetasSeleccionadas };
         }
@@ -82,6 +78,38 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
                 _etiquetasSeleccionadas = _listaEtiquetas[indiceLenguaje];
             }
             return _etiquetasSeleccionadas;
+        }
+
+        /**
+         * Verifica si el texto de estado corresponde al estado de paquete ya recibido en cualquiera de los 5 idiomas.
+         */
+        public bool EsEstadoRecibido(string estadoActual)
+        {
+            if (string.IsNullOrWhiteSpace(estadoActual))
+                return false;
+
+            foreach (var et in _listaEtiquetas)
+            {
+                if (et.EstadosTransaccion != null && et.EstadosTransaccion.Count >= 3)
+                {
+                    if (string.Equals(estadoActual, et.EstadosTransaccion[2], StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+            return estadoActual.Contains("RECIBIDO", StringComparison.OrdinalIgnoreCase)
+                || estadoActual.Contains("RECEIVED", StringComparison.OrdinalIgnoreCase)
+                || estadoActual.Contains("REÇU", StringComparison.OrdinalIgnoreCase)
+                || estadoActual.Contains("EMPFANGEN", StringComparison.OrdinalIgnoreCase)
+                || estadoActual.Contains("RECEBIDO", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public string ObtenerEstadoTraducido(bool recibido)
+        {
+            if (_etiquetasSeleccionadas.EstadosTransaccion != null && _etiquetasSeleccionadas.EstadosTransaccion.Count >= 3)
+            {
+                return recibido ? _etiquetasSeleccionadas.EstadosTransaccion[2] : _etiquetasSeleccionadas.EstadosTransaccion[0];
+            }
+            return recibido ? "RECIBIDO EN DESTINO" : "ENVIADO (EN TRÁNSITO)";
         }
 
         public string ObtenerTexto(string clave)
@@ -134,13 +162,13 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             sb.AppendLine($"• {e.ColPeso}:            {p.PesoKg:F2} kg");
             sb.AppendLine($"• {e.ColValor}:          ${p.ValorDeclarado:N2}");
             sb.AppendLine($"• {e.ColEstado}:            {p.EstadoTransaccion}");
-            sb.AppendLine($"• Fecha / Timestamp:    {p.FechaProcesamiento:yyyy-MM-dd HH:mm:ss}");
+            sb.AppendLine($"• {e.EtiquetaFecha}:    {p.FechaProcesamiento:yyyy-MM-dd HH:mm:ss}");
             sb.AppendLine("--------------------------------------------");
             sb.AppendLine($"1. {e.ColSubPeso} (${cfg.PrecioBasePorKg:N2}/kg):   ${p.SubtotalPeso:N2}");
             sb.AppendLine($"2. {e.ColRecargo} ({p.Zona}):          ${p.RecargoZona:N2}");
             sb.AppendLine($"3. {e.ColPenal} (> {cfg.PesoLimiteKg} kg):        ${p.PenalizacionSobrepeso:N2}");
             sb.AppendLine($"4. {e.ColSeguro} (> ${cfg.MontoMinimoSeguro:N0}):         ${p.SeguroValorDeclarado:N2}");
-            sb.AppendLine($"5. Envío Fijo / Fixed Fee:        ${p.CostoFijoEnvio:N2}");
+            sb.AppendLine($"5. {e.EtiquetaEnvioFijo}:        ${p.CostoFijoEnvio:N2}");
             sb.AppendLine("--------------------------------------------");
             sb.AppendLine($"• {e.ColSubNeto}:                   ${p.SubtotalNeto:N2}");
             sb.AppendLine($"• {e.ColIVA} ({cfg.TasaIVA * 100:F0}%):                      ${p.MontoIVA:N2}");
@@ -153,8 +181,8 @@ namespace SistemaLogisticaAuditoria.Servicios.Logica
             Etiquetas e = _etiquetasSeleccionadas;
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(e.TituloResumenLote);
-            sb.AppendLine($"• Válidos / Valid:    {r.PaquetesValidos.Length}  |  Errores: {r.ErroresDetectados.Length}");
-            sb.AppendLine($"• Matriz 2D:          string[{r.MatrizSegmentada.GetLength(0)}, {r.MatrizSegmentada.GetLength(1)}]");
+            sb.AppendLine($"• {e.EtiquetaValidos}:    {r.PaquetesValidos.Length}  |  {e.EtiquetaErrores}: {r.ErroresDetectados.Length}");
+            sb.AppendLine($"• {e.EtiquetaMatriz2D}:   string[{r.MatrizSegmentada.GetLength(0)}, {r.MatrizSegmentada.GetLength(1)}]");
             sb.AppendLine($"• {e.ColPeso}:          {r.SumaPesoTotal:F2} kg");
             sb.AppendLine($"• {e.ColSubNeto}:          ${r.SumaSubtotalNeto:N2}");
             sb.AppendLine($"• {e.ColIVA}:                ${r.SumaIVA:N2}");

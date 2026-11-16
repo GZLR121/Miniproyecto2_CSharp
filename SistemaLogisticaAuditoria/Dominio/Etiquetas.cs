@@ -44,6 +44,11 @@ namespace SistemaLogisticaAuditoria.Dominio
         private string _msgRecepcionActualizada = string.Empty;
         private string _tituloInspeccion = string.Empty;
         private string _tituloResumenLote = string.Empty;
+        private string _etiquetaFecha = string.Empty;
+        private string _etiquetaEnvioFijo = string.Empty;
+        private string _etiquetaValidos = string.Empty;
+        private string _etiquetaErrores = string.Empty;
+        private string _etiquetaMatriz2D = string.Empty;
         private List<string> _estadosTransaccion = new List<string>();
 
         public string Idioma { get => _idioma; set => _idioma = value ?? string.Empty; }
@@ -79,6 +84,11 @@ namespace SistemaLogisticaAuditoria.Dominio
         public string MsgRecepcionActualizada { get => _msgRecepcionActualizada; set => _msgRecepcionActualizada = value ?? string.Empty; }
         public string TituloInspeccion { get => _tituloInspeccion; set => _tituloInspeccion = value ?? string.Empty; }
         public string TituloResumenLote { get => _tituloResumenLote; set => _tituloResumenLote = value ?? string.Empty; }
+        public string EtiquetaFecha { get => _etiquetaFecha; set => _etiquetaFecha = value ?? string.Empty; }
+        public string EtiquetaEnvioFijo { get => _etiquetaEnvioFijo; set => _etiquetaEnvioFijo = value ?? string.Empty; }
+        public string EtiquetaValidos { get => _etiquetaValidos; set => _etiquetaValidos = value ?? string.Empty; }
+        public string EtiquetaErrores { get => _etiquetaErrores; set => _etiquetaErrores = value ?? string.Empty; }
+        public string EtiquetaMatriz2D { get => _etiquetaMatriz2D; set => _etiquetaMatriz2D = value ?? string.Empty; }
         public List<string> EstadosTransaccion { get => _estadosTransaccion; set => _estadosTransaccion = value ?? new List<string>(); }
     }
 }

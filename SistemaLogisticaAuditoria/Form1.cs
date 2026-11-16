@@ -130,8 +130,22 @@ namespace SistemaLogisticaAuditoria
 
                 if (_resultadoActual != null)
                 {
+                    int filaSeleccionada = dgvPaquetes.CurrentRow != null ? dgvPaquetes.CurrentRow.Index : 0;
+                    for (int i = 0; i < _resultadoActual.PaquetesValidos.Length; i++)
+                    {
+                        Paquete p = _resultadoActual.PaquetesValidos[i];
+                        bool yaRecibido = _gestorIdioma.EsEstadoRecibido(p.EstadoTransaccion);
+                        p.EstadoTransaccion = _gestorIdioma.ObtenerEstadoTraducido(yaRecibido);
+                    }
+                    PoblarTablaPaquetes(_resultadoActual.PaquetesValidos);
+                    if (dgvPaquetes.Rows.Count > 0 && filaSeleccionada >= 0 && filaSeleccionada < dgvPaquetes.Rows.Count)
+                    {
+                        dgvPaquetes.ClearSelection();
+                        dgvPaquetes.Rows[filaSeleccionada].Selected = true;
+                        dgvPaquetes.CurrentCell = dgvPaquetes.Rows[filaSeleccionada].Cells[0];
+                    }
                     ActualizarResumenLote(_resultadoActual);
-                    ProyectarPaqueteSeleccionado();
+                    ProyectarPaquetePorIndice(filaSeleccionada);
                 }
             }
             catch (JsonException er)
@@ -224,6 +238,10 @@ namespace SistemaLogisticaAuditoria
                 _resultadoActual = _servicioLotes.ProcesarTextoLote(txtLoteEntrada.Text, _gestorIdioma.IndiceLenguajeActual != 0);
 
                 // Guardar las transacciones de envío en la Base de Datos (RF4)
+                for (int i = 0; i < _resultadoActual.PaquetesValidos.Length; i++)
+                {
+                    _resultadoActual.PaquetesValidos[i].EstadoTransaccion = _gestorIdioma.ObtenerEstadoTraducido(false);
+                }
                 _repositorioBd.GuardarLoteEnBaseDatos(_resultadoActual.PaquetesValidos);
 
                 PoblarTablaPaquetes(_resultadoActual.PaquetesValidos);
